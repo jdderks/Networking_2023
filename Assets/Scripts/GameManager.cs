@@ -11,15 +11,9 @@ public class GameManager : MonoBehaviour
     //Simple singleton
     public static GameManager Instance { get; private set; }
 
-    [SerializeField] private GameObject onlinePanel;
-    [SerializeField] private GameObject connectedPanel;
-
-    [SerializeField] private TMP_InputField adressInput;
-    [SerializeField] private Image assignedColorImage;
-    public Image AssignedColorImage { get => assignedColorImage; set => assignedColorImage = value; }
-
-
+    public UIManager uiManager;
     public TeamManager teamManager;
+    public TileGrid grid;
 
     public Server server;
     public Client client;
@@ -29,14 +23,14 @@ public class GameManager : MonoBehaviour
     {
         server.Init(8007);
         client.Init("127.0.0.1", 8007);
-    }    
+    }
 
     public void Connect()
     {
-        client.Init(adressInput.text, 8007);
+        client.Init(uiManager.AdressInput.text, 8007);
     }
 
-    
+
     private void Awake()
     {
         // If there is an instance, and it's not me, delete myself.
@@ -51,9 +45,17 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    internal void ActivateConnectedPanel()
+    public void ActivateConnectedPanel()
     {
-        onlinePanel.gameObject.SetActive(false);
-        connectedPanel.gameObject.SetActive(true);
+        uiManager.OnlinePanel.gameObject.SetActive(false);
+        uiManager.ConnectedPanel.gameObject.SetActive(true);
+    }
+
+    public void StartGame()
+    {
+        uiManager.HostPanel.SetActive(false);
+        uiManager.ConnectedPanel.SetActive(false);
+        uiManager.OnlinePanel.SetActive(false);
+        grid.CreateTileGrid();
     }
 }

@@ -10,6 +10,8 @@ using System;
 
 public class Client : MonoBehaviour
 {
+    public static Client Instance;
+
     private void Awake()
     {
         // If there is an instance, and it's not me, delete myself.
@@ -23,8 +25,6 @@ public class Client : MonoBehaviour
             Instance = this;
         }
     }
-
-    private Client Instance;
 
     public NetworkDriver driver;
     private NetworkConnection connection;

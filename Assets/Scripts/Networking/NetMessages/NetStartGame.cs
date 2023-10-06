@@ -35,7 +35,6 @@ public class NetStartGame : NetMessage
 
     public override void ReceivedOnServer(NetworkConnection cnn)
     {
-        base.ReceivedOnServer(cnn);
         NetUtility.S_START_GAME?.Invoke(this, cnn);
     }
 }

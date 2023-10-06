@@ -40,7 +40,6 @@ public class NetWelcome : NetMessage
 
     public override void ReceivedOnServer(NetworkConnection cnn)
     {
-        base.ReceivedOnServer(cnn);
         NetUtility.S_WELCOME?.Invoke(this, cnn);
     }
 }

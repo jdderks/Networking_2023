@@ -17,13 +17,13 @@ public enum Team
 public class TeamManager : MonoBehaviour
 {
     private int playerCount = -1;
-    
+
     [SerializeField] private Team currentTeam = Team.None;
 
-    public Team CurrentTeam 
-    { 
-        get => currentTeam; 
-        set => currentTeam = value; 
+    public Team CurrentTeam
+    {
+        get => currentTeam;
+        set => currentTeam = value;
     }
 
     public static Color GetTeamColor(Team team)
@@ -57,6 +57,12 @@ public class TeamManager : MonoBehaviour
         UnregisterEvents();
     }
 
+    public void StartGame()
+    {
+        var startGameNM = new NetStartGame();
+        Client.Instance.SendToServer(startGameNM);
+    }
+
     private void RegisterEvents()
     {
         NetUtility.S_WELCOME += OnWelcomeServer;
@@ -64,11 +70,19 @@ public class TeamManager : MonoBehaviour
         NetUtility.C_WELCOME += OnWelcomeClient;
 
         NetUtility.C_START_GAME += OnStartGameClient;
+
+        NetUtility.S_START_GAME += OnStartGameServer;
     }
 
     private void UnregisterEvents()
     {
         NetUtility.S_WELCOME -= OnWelcomeServer;
+
+        NetUtility.C_WELCOME -= OnWelcomeClient;
+
+        NetUtility.C_START_GAME -= OnStartGameClient;
+
+        NetUtility.S_START_GAME -= OnStartGameServer;
     }
 
     //Server
@@ -82,6 +96,12 @@ public class TeamManager : MonoBehaviour
         Server.Instance.SendToClient(cnn, welcome);
     }
 
+    private void OnStartGameServer(NetMessage msg, NetworkConnection cnn)
+    {
+        NetStartGame startGame = msg as NetStartGame;
+        Server.Instance.Broadcast(startGame);
+    }
+
     //Client
     private void OnWelcomeClient(NetMessage msg)
     {
@@ -90,14 +110,16 @@ public class TeamManager : MonoBehaviour
         var assignedTeam = nw.AssignedTeam;
         currentTeam = (Team)assignedTeam;
         GameManager.Instance.ActivateConnectedPanel();
-        GameManager.Instance.AssignedColorImage.color = GetTeamColor(currentTeam);
+        GameManager.Instance.uiManager.AssignedColorImage.color = GetTeamColor(currentTeam);
         Debug.Log($"My assigned team = {(Team)nw.AssignedTeam}");
         //throw new NotImplementedException();
     }
 
-    private void OnStartGameClient(NetMessage message)
+    private void OnStartGameClient(NetMessage msg)
     {
-
+        //Here is what happens when the game starts on the client
+        NetStartGame nsg = msg as NetStartGame;
+        GameManager.Instance.StartGame();
     }
     #endregion
 

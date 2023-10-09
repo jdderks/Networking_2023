@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System;
+using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
@@ -57,5 +58,11 @@ public class GameManager : MonoBehaviour
         uiManager.ConnectedPanel.SetActive(false);
         uiManager.OnlinePanel.SetActive(false);
         grid.CreateTileGrid();
+        
+        //NetNextTeam nnt = new();
+        //var startTeam = Team.Red;//Random.value > 0.5f ? (int)Team.Red : (int)Team.Blue;
+        //nnt.team = (int)startTeam;
+        //Client.Instance.SendToServer(nnt);
+
     }
 }

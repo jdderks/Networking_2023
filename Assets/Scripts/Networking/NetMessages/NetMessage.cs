@@ -12,7 +12,8 @@ public enum OpCode
     KEEP_ALIVE = 1,
     WELCOME = 2,
     START_GAME = 3,
-    CUBE_CLICKED = 4
+    CUBE_CLICKED = 4,
+    NEXT_TEAM = 5
 }
 
 public class NetMessage

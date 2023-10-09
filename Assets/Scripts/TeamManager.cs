@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Networking.Transport;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public enum Team
 {
@@ -18,12 +19,12 @@ public class TeamManager : MonoBehaviour
 {
     private int playerCount = -1;
 
-    [SerializeField] private Team currentTeam = Team.None;
+    [SerializeField] private Team teamPlayingAs = Team.None;
 
     public Team CurrentTeam
     {
-        get => currentTeam;
-        set => currentTeam = value;
+        get => teamPlayingAs;
+        set => teamPlayingAs = value;
     }
 
     public static Color GetTeamColor(Team team)
@@ -44,6 +45,25 @@ public class TeamManager : MonoBehaviour
             default:
                 return Color.white;
         }
+    }
+
+    public void SetNextTeamTurn()
+    {
+        //if (currentTeamTurn == Team.Red)
+        //{
+        //    currentTeamTurn = Team.Blue;
+        //}
+        //else if (currentTeamTurn == Team.Blue)
+        //{
+        //    currentTeamTurn = Team.Blue;
+        //}
+        ////Below code is if I want more than 2 clients to be able to connect, requires rewrite.
+        //int currentTeamValue = (int)currentTeamTurn;
+        //int totalTeams = Enum.GetValues(typeof(Team)).Length - 1;
+
+        //int nextTeamValue = (currentTeamValue % totalTeams) + 1;
+
+        //currentTeamTurn = (Team)nextTeamValue;
     }
 
     #region Networking Related
@@ -74,6 +94,8 @@ public class TeamManager : MonoBehaviour
         NetUtility.S_START_GAME += OnStartGameServer;
     }
 
+
+
     private void UnregisterEvents()
     {
         NetUtility.S_WELCOME -= OnWelcomeServer;
@@ -99,6 +121,7 @@ public class TeamManager : MonoBehaviour
     private void OnStartGameServer(NetMessage msg, NetworkConnection cnn)
     {
         NetStartGame startGame = msg as NetStartGame;
+
         Server.Instance.Broadcast(startGame);
     }
 
@@ -108,9 +131,9 @@ public class TeamManager : MonoBehaviour
         NetWelcome nw = msg as NetWelcome;
 
         var assignedTeam = nw.AssignedTeam;
-        currentTeam = (Team)assignedTeam;
+        teamPlayingAs = (Team)assignedTeam;
         GameManager.Instance.ActivateConnectedPanel();
-        GameManager.Instance.uiManager.AssignedColorImage.color = GetTeamColor(currentTeam);
+        GameManager.Instance.uiManager.AssignedColorImage.color = GetTeamColor(teamPlayingAs);
         Debug.Log($"My assigned team = {(Team)nw.AssignedTeam}");
     }
 
@@ -120,6 +143,7 @@ public class TeamManager : MonoBehaviour
         NetStartGame nsg = msg as NetStartGame;
         GameManager.Instance.StartGame();
     }
+    
     #endregion
 
 }

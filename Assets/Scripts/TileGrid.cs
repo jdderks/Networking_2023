@@ -14,7 +14,6 @@ public class TileGrid : MonoBehaviour
 
     public List<Tile> tiles = new();
 
-
     void Update()
     {
         // Check for mouse click
@@ -27,10 +26,14 @@ public class TileGrid : MonoBehaviour
             {
                 GameObject hitObject = hit.collider.gameObject;
                 Tile tile = hitObject.GetComponentInParent<Tile>();
-                CubeClicked(tile);
+                if (tile.OwnedByTeam == Team.None/* && GameManager.Instance.teamManager.CurrentTeam == GameManager.Instance.teamManager.CurrentTeamTurn*/)
+                {
+                    CubeClicked(tile);
+                }
             }
         }
     }
+
     [Button]
     public void CreateTileGrid()
     {
@@ -49,13 +52,6 @@ public class TileGrid : MonoBehaviour
                 tile.ZPosition = z;
                 tile.CubeObject = newTile;
                 tiles.Add(tile);
-
-                // Assuming Tile script has a method to set its properties
-                //Tile tileScript = newTile.GetComponent<Tile>();
-                //if (tileScript != null)
-                //{
-                //    tileScript.SetProperties(); // Set any properties of the tile
-                //}
             }
         }
     }
@@ -76,7 +72,7 @@ public class TileGrid : MonoBehaviour
     {
         //Tile tile = hitObject.GetComponent<Tile>();
         //Assert.IsNotNull(tile, "make sure the hit object has a Tile component!");
-        
+
         NetCubeClicked CubeClickedNM = new NetCubeClicked();
         CubeClickedNM.xPosition = tile.XPosition;
         CubeClickedNM.zPosition = tile.ZPosition;
@@ -120,6 +116,7 @@ public class TileGrid : MonoBehaviour
         {
             // Change the color of the tile
             Assert.IsNotNull(tile.CubeObject, "did you forget to set the CubeObject in the Tile prefab?");
+            tile.OwnedByTeam = (Team)nw.team;
             Renderer renderer = tile.GetComponentInChildren<Renderer>();
             if (renderer != null)
             {

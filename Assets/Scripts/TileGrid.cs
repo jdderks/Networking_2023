@@ -1,5 +1,10 @@
 using UnityEngine;
 using NaughtyAttributes;
+using System;
+using Unity.Networking.Transport;
+using System.Collections.Generic;
+using UnityEngine.Assertions;
+
 public class TileGrid : MonoBehaviour
 {
     public GameObject tilePrefab;  // The prefab for the tile game object
@@ -7,12 +12,25 @@ public class TileGrid : MonoBehaviour
     public int gridSizeY = 5;       // Number of tiles in the vertical grid
     public float spacing = 2.0f;   // Spacing between tiles
 
-    void Start()
-    {
-        // Create the grid of tiles
-        //CreateTileGrid();
-    }
+    public List<Tile> tiles = new();
 
+
+    void Update()
+    {
+        // Check for mouse click
+        if (Input.GetMouseButtonDown(0))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit))
+            {
+                GameObject hitObject = hit.collider.gameObject;
+                Tile tile = hitObject.GetComponentInParent<Tile>();
+                CubeClicked(tile);
+            }
+        }
+    }
     [Button]
     public void CreateTileGrid()
     {
@@ -26,6 +44,11 @@ public class TileGrid : MonoBehaviour
                 float xPos = x * spacing;
                 float zPos = z * spacing;
                 newTile.transform.position = new Vector3(xPos, 0, zPos);
+                var tile = newTile.GetComponentInChildren<Tile>();
+                tile.XPosition = x;
+                tile.ZPosition = z;
+                tile.CubeObject = newTile;
+                tiles.Add(tile);
 
                 // Assuming Tile script has a method to set its properties
                 //Tile tileScript = newTile.GetComponent<Tile>();
@@ -36,4 +59,79 @@ public class TileGrid : MonoBehaviour
             }
         }
     }
+
+    private Tile GetTileFromCoord(int x, int z)
+    {
+        for (int i = 0; i < tiles.Count; i++)
+        {
+            if (tiles[i].XPosition == x && tiles[i].ZPosition == z)
+            {
+                return tiles[i];
+            }
+        }
+        return null;
+    }
+
+    private void CubeClicked(Tile tile)
+    {
+        //Tile tile = hitObject.GetComponent<Tile>();
+        //Assert.IsNotNull(tile, "make sure the hit object has a Tile component!");
+        
+        NetCubeClicked CubeClickedNM = new NetCubeClicked();
+        CubeClickedNM.xPosition = tile.XPosition;
+        CubeClickedNM.zPosition = tile.ZPosition;
+        CubeClickedNM.team = (int)GameManager.Instance.teamManager.CurrentTeam;
+
+        Client.Instance.SendToServer(CubeClickedNM);
+    }
+
+    #region networking related stuff
+    private void Awake()
+    {
+        RegisterEvents();
+    }
+
+    private void OnDestroy()
+    {
+        UnregisterEvents();
+    }
+
+    private void RegisterEvents()
+    {
+        NetUtility.S_CUBE_CLICKED += OnCubeClickedServer;
+
+        NetUtility.C_CUBE_CLICKED += OnCubeClickedClient;
+
+    }
+
+    private void UnregisterEvents()
+    {
+        NetUtility.S_CUBE_CLICKED -= OnCubeClickedServer;
+
+        NetUtility.C_CUBE_CLICKED -= OnCubeClickedClient;
+    }
+
+    private void OnCubeClickedClient(NetMessage msg)
+    {
+        NetCubeClicked nw = msg as NetCubeClicked;
+        Tile tile = GetTileFromCoord(nw.xPosition, nw.zPosition);
+
+        if (tile != null)
+        {
+            // Change the color of the tile
+            Assert.IsNotNull(tile.CubeObject, "did you forget to set the CubeObject in the Tile prefab?");
+            Renderer renderer = tile.GetComponentInChildren<Renderer>();
+            if (renderer != null)
+            {
+                renderer.material.color = TeamManager.GetTeamColor((Team)nw.team);
+            }
+        }
+    }
+
+    private void OnCubeClickedServer(NetMessage msg, NetworkConnection cnn)
+    {
+        var nw = msg as NetCubeClicked;
+        Server.Instance.Broadcast(nw);
+    }
+    #endregion
 }

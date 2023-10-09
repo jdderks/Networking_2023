@@ -14,13 +14,13 @@ public static class NetUtility
     public static Action<NetMessage> C_KEEP_ALIVE;
     public static Action<NetMessage> C_WELCOME;
     public static Action<NetMessage> C_START_GAME;
-    public static Action<NetMessage> C_MAKE_MOVE;
+    public static Action<NetMessage> C_CUBE_CLICKED;
     public static Action<NetMessage> C_REMATCH;
 
     public static Action<NetMessage, NetworkConnection> S_KEEP_ALIVE;
     public static Action<NetMessage, NetworkConnection> S_WELCOME;
     public static Action<NetMessage, NetworkConnection> S_START_GAME;
-    public static Action<NetMessage, NetworkConnection> S_MAKE_MOVE;
+    public static Action<NetMessage, NetworkConnection> S_CUBE_CLICKED;
     public static Action<NetMessage, NetworkConnection> S_REMATCH;
 
     public static void OnData(DataStreamReader stream, NetworkConnection cnn, Server server = null)
@@ -32,7 +32,7 @@ public static class NetUtility
             case OpCode.KEEP_ALIVE: message = new NetKeepAlive(stream); break;
             case OpCode.WELCOME: message = new NetWelcome(stream); break;
             case OpCode.START_GAME: message = new NetStartGame(stream); break;
-            //case OpCode.MAKE_MOVE: message = new NetMakeMove(stream); break;
+            case OpCode.CUBE_CLICKED: message = new NetCubeClicked(stream); break;
             //case OpCode.REMATCH: message = new NetRematch(stream); break;
             default:
                 Debug.LogError("Message received had no OPCODE");

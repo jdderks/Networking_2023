@@ -1,18 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using NaughtyAttributes;
 
 public class Tile : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField, ReadOnly]private int xPosition;
+    [SerializeField, ReadOnly]private int zPosition;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    [SerializeField]private GameObject cubeObject;
+
+    public int XPosition { get => xPosition; set => xPosition = value; }
+    public int ZPosition { get => zPosition; set => zPosition = value; }
+    public GameObject CubeObject { get => cubeObject; set => cubeObject = value; }
 }

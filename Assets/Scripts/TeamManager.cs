@@ -112,7 +112,6 @@ public class TeamManager : MonoBehaviour
         GameManager.Instance.ActivateConnectedPanel();
         GameManager.Instance.uiManager.AssignedColorImage.color = GetTeamColor(currentTeam);
         Debug.Log($"My assigned team = {(Team)nw.AssignedTeam}");
-        //throw new NotImplementedException();
     }
 
     private void OnStartGameClient(NetMessage msg)

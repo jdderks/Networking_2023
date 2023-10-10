@@ -10,9 +10,9 @@ public enum Team
 {
     None = 0,
     Red = 1,
-    Blue = 2,
-    Yellow = 3,
-    Green = 4
+    Blue = 2//,
+    //Yellow = 3,
+    //Green = 4
 }
 
 public class TeamManager : MonoBehaviour
@@ -20,12 +20,10 @@ public class TeamManager : MonoBehaviour
     private int playerCount = -1;
 
     [SerializeField] private Team teamPlayingAs = Team.None;
+    [SerializeField] private Team currentTeamTurn = Team.None;
 
-    public Team CurrentTeam
-    {
-        get => teamPlayingAs;
-        set => teamPlayingAs = value;
-    }
+    public Team CurrentTeam { get => teamPlayingAs; set => teamPlayingAs = value; }
+    public Team CurrentTeamTurn { get => currentTeamTurn; set => currentTeamTurn = value; }
 
     public static Color GetTeamColor(Team team)
     {
@@ -38,33 +36,15 @@ public class TeamManager : MonoBehaviour
                 return Color.red;
             case Team.Blue:
                 return Color.blue;
-            case Team.Yellow:
-                return Color.yellow;
-            case Team.Green:
-                return Color.green;
+            //case Team.Yellow:
+            //    return Color.yellow;
+            //case Team.Green:
+            //    return Color.green;
             default:
                 return Color.white;
         }
     }
 
-    public void SetNextTeamTurn()
-    {
-        //if (currentTeamTurn == Team.Red)
-        //{
-        //    currentTeamTurn = Team.Blue;
-        //}
-        //else if (currentTeamTurn == Team.Blue)
-        //{
-        //    currentTeamTurn = Team.Blue;
-        //}
-        ////Below code is if I want more than 2 clients to be able to connect, requires rewrite.
-        //int currentTeamValue = (int)currentTeamTurn;
-        //int totalTeams = Enum.GetValues(typeof(Team)).Length - 1;
-
-        //int nextTeamValue = (currentTeamValue % totalTeams) + 1;
-
-        //currentTeamTurn = (Team)nextTeamValue;
-    }
 
     #region Networking Related
     private void Awake()
@@ -77,10 +57,15 @@ public class TeamManager : MonoBehaviour
         UnregisterEvents();
     }
 
-    public void StartGame()
+    public void StartGame() //Referenced in Unity Inspector
     {
         var startGameNM = new NetStartGame();
         Client.Instance.SendToServer(startGameNM);
+
+        var assignTeamNM = new NetAssignTeam();
+        //assignTeamNM.randomTeam = true;
+        assignTeamNM.teamToAssign = (int)Team.None;
+        Client.Instance.SendToServer(assignTeamNM);
     }
 
     private void RegisterEvents()
@@ -92,6 +77,10 @@ public class TeamManager : MonoBehaviour
         NetUtility.C_START_GAME += OnStartGameClient;
 
         NetUtility.S_START_GAME += OnStartGameServer;
+
+        NetUtility.C_ASSIGN_TEAM += OnAssignTeamClient;
+
+        NetUtility.S_ASSIGN_TEAM += OnAssignTeamServer;
     }
 
 
@@ -105,6 +94,10 @@ public class TeamManager : MonoBehaviour
         NetUtility.C_START_GAME -= OnStartGameClient;
 
         NetUtility.S_START_GAME -= OnStartGameServer;
+
+        NetUtility.C_ASSIGN_TEAM -= OnAssignTeamClient;
+
+        NetUtility.S_ASSIGN_TEAM -= OnAssignTeamServer;
     }
 
     //Server
@@ -125,6 +118,20 @@ public class TeamManager : MonoBehaviour
         Server.Instance.Broadcast(startGame);
     }
 
+    private void OnAssignTeamServer(NetMessage msg, NetworkConnection cnn)
+    {
+        var nat = msg as NetAssignTeam;
+        if (nat.teamToAssign == (int)Team.None) //If assign team is null, select a random team
+        {
+            nat.teamToAssign = Random.value < 0.5f ? (int)Team.Red : (int)Team.Blue;
+            Server.Instance.Broadcast(nat);
+        }
+        else
+        {
+            Server.Instance.Broadcast(nat);
+        }
+    }
+
     //Client
     private void OnWelcomeClient(NetMessage msg)
     {
@@ -143,7 +150,15 @@ public class TeamManager : MonoBehaviour
         NetStartGame nsg = msg as NetStartGame;
         GameManager.Instance.StartGame();
     }
-    
+
+    private void OnAssignTeamClient(NetMessage msg)
+    {
+        Debug.Log("NetAssignTeam message received");
+        var nat = msg as NetAssignTeam;
+        CurrentTeamTurn = (Team)nat.teamToAssign;
+        GameManager.Instance.uiManager.CurrentTurnText.gameObject.SetActive(true);
+        GameManager.Instance.uiManager.CurrentTurnText.text = currentTeamTurn.ToString();
+    }
     #endregion
 
 }

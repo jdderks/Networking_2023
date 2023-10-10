@@ -26,7 +26,7 @@ public class TileGrid : MonoBehaviour
             {
                 GameObject hitObject = hit.collider.gameObject;
                 Tile tile = hitObject.GetComponentInParent<Tile>();
-                if (tile.OwnedByTeam == Team.None/* && GameManager.Instance.teamManager.CurrentTeam == GameManager.Instance.teamManager.CurrentTeamTurn*/)
+                if (tile.OwnedByTeam == Team.None && GameManager.Instance.teamManager.CurrentTeam == GameManager.Instance.teamManager.CurrentTeamTurn)
                 {
                     CubeClicked(tile);
                 }
@@ -73,12 +73,21 @@ public class TileGrid : MonoBehaviour
         //Tile tile = hitObject.GetComponent<Tile>();
         //Assert.IsNotNull(tile, "make sure the hit object has a Tile component!");
 
-        NetCubeClicked CubeClickedNM = new NetCubeClicked();
-        CubeClickedNM.xPosition = tile.XPosition;
-        CubeClickedNM.zPosition = tile.ZPosition;
-        CubeClickedNM.team = (int)GameManager.Instance.teamManager.CurrentTeam;
+        NetCubeClicked cubeClickedNM = new NetCubeClicked();
+        cubeClickedNM.xPosition = tile.XPosition;
+        cubeClickedNM.zPosition = tile.ZPosition;
+        cubeClickedNM.team = (int)GameManager.Instance.teamManager.CurrentTeam;
 
-        Client.Instance.SendToServer(CubeClickedNM);
+        Client.Instance.SendToServer(cubeClickedNM);
+
+        //Go to next team
+        var assignTeamNM = new NetAssignTeam();
+        //assignTeamNM.randomTeam = false;
+        if (GameManager.Instance.teamManager.CurrentTeamTurn == Team.Red)
+            assignTeamNM.teamToAssign = (int)Team.Blue;
+        else
+            assignTeamNM.teamToAssign = (int)Team.Red;
+        Client.Instance.SendToServer(assignTeamNM);
     }
 
     #region networking related stuff

@@ -13,7 +13,7 @@ public enum OpCode
     WELCOME = 2,
     START_GAME = 3,
     CUBE_CLICKED = 4,
-    NEXT_TEAM = 5
+    ASSIGN_TEAM = 5
 }
 
 public class NetMessage

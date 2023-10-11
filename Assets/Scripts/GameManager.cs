@@ -6,6 +6,8 @@ using UnityEngine.UI;
 using TMPro;
 using System;
 using Random = UnityEngine.Random;
+using Unity.Networking.Transport;
+using UnityEditor;
 
 public class GameManager : MonoBehaviour
 {
@@ -18,6 +20,8 @@ public class GameManager : MonoBehaviour
 
     public Server server;
     public Client client;
+
+    public bool gamePlayable = false;
 
 
     public void StartHosting()
@@ -44,6 +48,11 @@ public class GameManager : MonoBehaviour
         {
             Instance = this;
         }
+        RegisterEvents();
+    }
+    private void OnDestroy()
+    {
+        UnregisterEvents();
     }
 
     public void ActivateConnectedPanel()
@@ -58,11 +67,49 @@ public class GameManager : MonoBehaviour
         uiManager.ConnectedPanel.SetActive(false);
         uiManager.OnlinePanel.SetActive(false);
         grid.CreateTileGrid();
-        
+
         //NetNextTeam nnt = new();
         //var startTeam = Team.Red;//Random.value > 0.5f ? (int)Team.Red : (int)Team.Blue;
         //nnt.team = (int)startTeam;
         //Client.Instance.SendToServer(nnt);
+    }
 
+
+    private void RegisterEvents()
+    {
+        NetUtility.S_PLAYER_WIN += OnPlayerWinServer;
+
+        NetUtility.C_PLAYER_WIN += OnPlayerWinClient;
+
+    }
+
+    private void UnregisterEvents()
+    {
+        NetUtility.S_PLAYER_WIN -= OnPlayerWinServer;
+
+        NetUtility.C_PLAYER_WIN -= OnPlayerWinClient;
+    }
+
+    public void OnPlayerWinClient(NetMessage msg)
+    {
+        NetPlayerWin playerWinNM = msg as NetPlayerWin;
+        Team teamThatWon = (Team)playerWinNM.teamWon;
+        uiManager.DisplayWonPanel(teamThatWon);
+        grid.RemoveTileGrid();
+        gamePlayable = false;
+    }
+
+    public void OnPlayerWinServer(NetMessage msg, NetworkConnection cnn)
+    {
+        NetPlayerWin playerWinNM = msg as NetPlayerWin;
+        Server.Instance.Broadcast(playerWinNM);
+    }
+
+    public void CloseGame()
+    {
+#if UNITY_EDITOR
+        EditorApplication.ExitPlaymode();
+#endif
+        Application.Quit();
     }
 }

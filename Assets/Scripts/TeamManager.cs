@@ -112,8 +112,6 @@ public class TeamManager : MonoBehaviour
         {
             int connectionAmount = Server.Instance.AmountOfConnections;
             GameManager.Instance.uiManager.WaitingOrConnectedText.text = "Clients connected: " + connectionAmount;
-
-
         }
 
         Server.Instance.SendToClient(cnn, welcome);
@@ -156,6 +154,7 @@ public class TeamManager : MonoBehaviour
     {
         //Here is what happens when the game starts on the client
         NetStartGame nsg = msg as NetStartGame;
+        GameManager.Instance.gamePlayable = true;
         GameManager.Instance.StartGame();
     }
 

@@ -108,6 +108,14 @@ public class TeamManager : MonoBehaviour
         if (playerCount == -1) playerCount = 0;
         welcome.AssignedTeam = ++playerCount;
 
+        if (Server.Instance.IsActive)
+        {
+            int connectionAmount = Server.Instance.AmountOfConnections;
+            GameManager.Instance.uiManager.WaitingOrConnectedText.text = "Clients connected: " + connectionAmount;
+
+
+        }
+
         Server.Instance.SendToClient(cnn, welcome);
     }
 

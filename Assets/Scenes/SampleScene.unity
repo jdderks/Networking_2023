@@ -444,6 +444,7 @@ MonoBehaviour:
   connectedPanel: {fileID: 1784949273}
   hostPanel: {fileID: 327625040}
   currentTurnText: {fileID: 498766514}
+  waitingOrConnectedText: {fileID: 46413765}
   adressInput: {fileID: 1886896041}
   assignedColorImage: {fileID: 474913054}
 --- !u!1 &327625040

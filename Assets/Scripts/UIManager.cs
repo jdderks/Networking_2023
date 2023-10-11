@@ -10,6 +10,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject connectedPanel;
     [SerializeField] private GameObject hostPanel;
     [SerializeField] private TextMeshProUGUI currentTurnText;
+    [SerializeField] private TextMeshProUGUI waitingOrConnectedText;
 
     [SerializeField] private TMP_InputField adressInput;
     [SerializeField] private Image assignedColorImage;
@@ -19,4 +20,5 @@ public class UIManager : MonoBehaviour
     public GameObject OnlinePanel { get => onlinePanel; set => onlinePanel = value; }
     public TMP_InputField AdressInput { get => adressInput; set => adressInput = value; }
     public TextMeshProUGUI CurrentTurnText { get => currentTurnText; set => currentTurnText = value; }
+    public TextMeshProUGUI WaitingOrConnectedText { get => waitingOrConnectedText; set => waitingOrConnectedText = value; }
 }

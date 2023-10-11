@@ -7,10 +7,10 @@ using UnityEngine.Assertions;
 
 public class TileGrid : MonoBehaviour
 {
-    public GameObject tilePrefab;  // The prefab for the tile game object
+    public GameObject tilePrefab;   // The prefab for the tile game object
     public int gridSizeX = 5;       // Number of tiles in the horizontal grid
     public int gridSizeY = 5;       // Number of tiles in the vertical grid
-    public float spacing = 2.0f;   // Spacing between tiles
+    public float spacing = 2.0f;    // Spacing between tiles
 
     public List<Tile> tiles = new();
 

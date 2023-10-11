@@ -10,21 +10,31 @@ using UnityEngine;
 
 public class Server : MonoBehaviour
 {
-    public static Server Instance { get; private set; }
-
     public NetworkDriver driver;
     private NativeList<NetworkConnection> connections;
+
+    private int amountOfConnections;
 
     private bool isActive = false;
     private const float keepAliveTickRate = 20.0f;
     private float lastKeepAlive;
 
     public Action OnConnectionDropped;
+    public static Server Instance { get; private set; }
+    public bool IsActive { get => isActive; set => isActive = value; }
+    public int AmountOfConnections
+    {
+        get => amountOfConnections;
+        set
+        {
+            amountOfConnections = value;
+            Debug.Log("Amount of clients connected: " + amountOfConnections);
+        }
+    }
 
     private void Awake()
     {
         // If there is an instance, and it's not me, delete myself.
-
         if (Instance != null && Instance != this)
         {
             Destroy(this);
@@ -54,16 +64,16 @@ public class Server : MonoBehaviour
         }
 
         connections = new(2, Allocator.Persistent);
-        isActive = true;
+        IsActive = true;
     }
 
     public void Shutdown()
     {
-        if (isActive)
+        if (IsActive)
         {
             driver.Dispose();
             connections.Dispose();
-            isActive = false;
+            IsActive = false;
         }
     }
 
@@ -74,7 +84,7 @@ public class Server : MonoBehaviour
 
     public void Update()
     {
-        if (!isActive)
+        if (!IsActive)
             return;
 
         KeepAlive();
@@ -94,6 +104,7 @@ public class Server : MonoBehaviour
             if (!connections[i].IsCreated)
             {
                 connections.RemoveAtSwapBack(i);
+                amountOfConnections--;
                 --i;
             }
         }
@@ -105,6 +116,7 @@ public class Server : MonoBehaviour
         while ((c = driver.Accept()) != default(NetworkConnection))
         {
             connections.Add(c);
+            amountOfConnections++;
         }
     }
 

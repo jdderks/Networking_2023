@@ -103,110 +103,44 @@ public class TileGrid : MonoBehaviour
 
     public bool CheckForFourInARow(Team teamToCheck)
     {
-        int gridWidth = 5;
-        int gridHeight = 5;
+        int[][] directions = new int[][] { new int[] { 0, 1 }, new int[] { 1, 0 }, new int[] { 1, 1 }, new int[] { 1, -1 } };
 
-        // Check horizontal
-        for (int row = 0; row < gridHeight; row++)
+        foreach (int[] dir in directions)
         {
-            for (int col = 0; col < gridWidth - 3; col++)
+            int dx = dir[0];
+            int dy = dir[1];
+
+            for (int row = 0; row < gridSizeY; row++)
             {
-                Tile firstTile = GetTileFromCoord(row, col);
-                if (firstTile != null && firstTile.OwnedByTeam == teamToCheck)
+                for (int col = 0; col < gridSizeX; col++)
                 {
-                    bool match = true;
-                    for (int i = 1; i < 4; i++)
+                    Tile firstTile = GetTileFromCoord(row, col);
+
+                    if (firstTile != null && firstTile.OwnedByTeam == teamToCheck)
                     {
-                        Tile nextTile = GetTileFromCoord(row, col + i);
-                        if (nextTile == null || nextTile.OwnedByTeam != teamToCheck)
+                        bool match = true;
+
+                        for (int i = 1; i < 4; i++)
                         {
-                            match = false;
-                            break;
+                            Tile nextTile = GetTileFromCoord(row + i * dy, col + i * dx);
+
+                            if (nextTile == null || nextTile.OwnedByTeam != teamToCheck)
+                            {
+                                match = false;
+                                break;
+                            }
                         }
+
+                        if (match)
+                            return true;
                     }
-                    if (match)
-                        return true;
                 }
             }
         }
-
-        // Check vertical
-        for (int col = 0; col < gridWidth; col++)
-        {
-            for (int row = 0; row < gridHeight - 3; row++)
-            {
-                Tile firstTile = GetTileFromCoord(row, col);
-                if (firstTile != null && firstTile.OwnedByTeam == teamToCheck)
-                {
-                    bool match = true;
-                    for (int i = 1; i < 4; i++)
-                    {
-                        Tile nextTile = GetTileFromCoord(row + i, col);
-                        if (nextTile == null || nextTile.OwnedByTeam != teamToCheck)
-                        {
-                            match = false;
-                            break;
-                        }
-                    }
-                    if (match)
-                        return true;
-                }
-            }
-        }
-
-        // Check diagonals (from top-right to bottom-left)
-        for (int row = 0; row < gridHeight - 3; row++)
-        {
-            for (int col = 3; col < gridWidth; col++)
-            {
-                Tile firstTile = GetTileFromCoord(row, col);
-                if (firstTile != null && firstTile.OwnedByTeam != Team.None)
-                {
-                    bool match = true;
-                    for (int i = 1; i < 4; i++)
-                    {
-                        Tile nextTile = GetTileFromCoord(row + i, col - i);
-                        if (nextTile == null || nextTile.OwnedByTeam != firstTile.OwnedByTeam)
-                        {
-                            match = false;
-                            break;
-                        }
-                    }
-                    if (match)
-                        return true;
-                }
-            }
-        }
-
-        // Check diagonals (from top-left to bottom-right)
-        for (int row = 0; row < gridHeight - 3; row++)
-        {
-            for (int col = 0; col < gridWidth - 3; col++)
-            {
-                Tile firstTile = GetTileFromCoord(row, col);
-                if (firstTile != null && firstTile.OwnedByTeam != Team.None)
-                {
-                    bool match = true;
-                    for (int i = 1; i < 4; i++)
-                    {
-                        Tile nextTile = GetTileFromCoord(row + i, col + i);
-                        if (nextTile == null || nextTile.OwnedByTeam != firstTile.OwnedByTeam)
-                        {
-                            match = false;
-                            break;
-                        }
-                    }
-                    if (match)
-                        return true;
-                }
-            }
-        }
-
-
-
 
         return false;
     }
+
 
 
     #region networking related stuff

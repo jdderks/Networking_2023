@@ -24,10 +24,14 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI waitingOrConnectedText;
     [SerializeField] private TMP_InputField adressInput;
     [SerializeField] private Image assignedColorImage;
+
+    //These objects with be swapped between UIstates
+    [SerializeField] private GameObject registerObjects;
+    [SerializeField] private GameObject loginObjects;
+    [SerializeField] private GameObject otherObjects;
+
     [Header("UI States")]
     [SerializeField] private UIState currentUiState = UIState.Main;
-
-
 
     public Image AssignedColorImage { get => assignedColorImage; set => assignedColorImage = value; }
     public GameObject HostPanel { get => hostPanel; set => hostPanel = value; }
@@ -41,20 +45,28 @@ public class UIManager : MonoBehaviour
         get => currentUiState;
         set => currentUiState = value;
     }
+
     public void SwitchToMainUI()
     {
         currentUiState = UIState.Main;
-        //disable and enable correct items
+        otherObjects.SetActive(true);
+        registerObjects.SetActive(false);
+        loginObjects.SetActive(false);
     }
 
     public void SwitchToLoginUI()
     {
         currentUiState = UIState.Login;
-        //disable and enable correct items
+        loginObjects.SetActive(true);
+        otherObjects.SetActive(false);
+        registerObjects.SetActive(false);
     }
     public void SwitchToRegisterUI()
     {
         currentUiState = UIState.Register;
+        loginObjects.SetActive(false);
+        otherObjects.SetActive(false);
+        registerObjects.SetActive(true);
         //disable and enable correct items
     }
 

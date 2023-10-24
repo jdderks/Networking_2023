@@ -48,7 +48,7 @@ public class Server : MonoBehaviour
     public void Init(ushort port)
     {
         driver = NetworkDriver.Create();
-        NetworkEndpoint endpoint = NetworkEndpoint.LoopbackIpv4; //This is looped back to not hack the dutch game garden
+        NetworkEndpoint endpoint = NetworkEndpoint.AnyIpv4; //This is looped back to not hack the dutch game garden
 
         endpoint.Port = port;
 

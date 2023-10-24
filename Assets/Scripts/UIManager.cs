@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine;
+using System;
 
 public enum UIState
 {
@@ -25,8 +26,21 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TMP_InputField adressInput;
     [SerializeField] private Image assignedColorImage;
 
+    [Header("Register related fields")]
+    [SerializeField] public TMP_InputField usernameInputField;
+    [SerializeField] public TMP_InputField passwordInputField;
+    [SerializeField] public TMP_InputField mailadressInputField;
+
+    [SerializeField] public TMP_InputField birthDayInputField;
+    [SerializeField] public TMP_InputField birthMonthInputField;
+    [SerializeField] public TMP_InputField birthYearInputField;
+
+    [SerializeField] public Toggle anonymousBox;
+
+    [SerializeField] public TextMeshProUGUI registrationStatusText;
+
     //These objects with be swapped between UIstates
-    [SerializeField] private GameObject registerObjects;
+    [Space, SerializeField] private GameObject registerObjects;
     [SerializeField] private GameObject loginObjects;
     [SerializeField] private GameObject otherObjects;
 
@@ -61,15 +75,14 @@ public class UIManager : MonoBehaviour
         otherObjects.SetActive(false);
         registerObjects.SetActive(false);
     }
+
     public void SwitchToRegisterUI()
     {
         currentUiState = UIState.Register;
         loginObjects.SetActive(false);
         otherObjects.SetActive(false);
         registerObjects.SetActive(true);
-        //disable and enable correct items
     }
-
 
     public void DisplayWonPanel(Team team)
     {
@@ -77,4 +90,23 @@ public class UIManager : MonoBehaviour
         wonPanel.SetActive(true);
         wonPanelText.text = team.ToString() + " has won!";
     }
+
+    internal string GetDateInputs()
+    {
+        string birthYear = birthYearInputField.text;
+        string birthMonth = birthMonthInputField.text;
+        string birthDay = birthDayInputField.text;
+    
+        //Formatting fixes
+        if (birthMonth.Length < 2 && birthMonth.Length > 0)
+            birthMonth = "0" + birthMonth;
+        if (birthDay.Length < 2 && birthDay.Length > 0)
+            birthDay = "0" + birthDay;
+
+        string stringDate = birthYear + "-" + birthMonth + "-" + birthDay;
+        return stringDate;
+    }
+
+
+    
 }

@@ -26,9 +26,13 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TMP_InputField adressInput;
     [SerializeField] private Image assignedColorImage;
 
+    [Header("Login related fields")]
+    [SerializeField] public TMP_InputField loginUsernameInputField;
+    [SerializeField] public TMP_InputField loginPasswordInputField;
+    
     [Header("Register related fields")]
-    [SerializeField] public TMP_InputField usernameInputField;
-    [SerializeField] public TMP_InputField passwordInputField;
+    [SerializeField] public TMP_InputField registrationUsernameInputField;
+    [SerializeField] public TMP_InputField registrationPasswordInputField;
     [SerializeField] public TMP_InputField mailadressInputField;
 
     [SerializeField] public TMP_InputField birthDayInputField;

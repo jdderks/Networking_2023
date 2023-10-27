@@ -29,7 +29,7 @@ public class UIManager : MonoBehaviour
     [Header("Login related fields")]
     [SerializeField] public TMP_InputField loginUsernameInputField;
     [SerializeField] public TMP_InputField loginPasswordInputField;
-    
+
     [Header("Register related fields")]
     [SerializeField] public TMP_InputField registrationUsernameInputField;
     [SerializeField] public TMP_InputField registrationPasswordInputField;
@@ -43,10 +43,15 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] public TextMeshProUGUI registrationStatusText;
 
-    //These objects with be swapped between UIstates
+    //These objects will be swapped between UIstates
     [Space, SerializeField] private GameObject registerObjects;
     [SerializeField] private GameObject loginObjects;
     [SerializeField] private GameObject otherObjects;
+
+    [SerializeField] private TextMeshProUGUI currentlyLoggedInText;
+
+    [Space, Header("Menu buttons"), SerializeField] private Button hostButton;
+    [SerializeField] private Button connectButton;
 
     [Header("UI States")]
     [SerializeField] private UIState currentUiState = UIState.Main;
@@ -63,6 +68,9 @@ public class UIManager : MonoBehaviour
         get => currentUiState;
         set => currentUiState = value;
     }
+    public TextMeshProUGUI CurrentlyLoggedInText { get => currentlyLoggedInText; set => currentlyLoggedInText = value; }
+    public Button HostButton { get => hostButton; set => hostButton = value; }
+    public Button ConnectButton { get => connectButton; set => connectButton = value; }
 
     public void SwitchToMainUI()
     {
@@ -90,7 +98,6 @@ public class UIManager : MonoBehaviour
 
     public void DisplayWonPanel(Team team)
     {
-
         wonPanel.SetActive(true);
         wonPanelText.text = team.ToString() + " has won!";
     }
@@ -100,7 +107,7 @@ public class UIManager : MonoBehaviour
         string birthYear = birthYearInputField.text;
         string birthMonth = birthMonthInputField.text;
         string birthDay = birthDayInputField.text;
-    
+
         //Formatting fixes
         if (birthMonth.Length < 2 && birthMonth.Length > 0)
             birthMonth = "0" + birthMonth;
@@ -112,5 +119,5 @@ public class UIManager : MonoBehaviour
     }
 
 
-    
+
 }

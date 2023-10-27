@@ -1,18 +1,23 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
-using System;
-using Random = UnityEngine.Random;
 using Unity.Networking.Transport;
 using UnityEditor;
 
 public class GameManager : MonoBehaviour
 {
     //Simple singleton
+    private bool loggedIn = false;
+
     public static GameManager Instance { get; private set; }
+    public bool LoggedIn
+    {
+        get => loggedIn;
+        set
+        {
+            loggedIn = value;
+            uiManager.ConnectButton.interactable = value;
+            uiManager.HostButton.interactable = value;
+        }
+    }
 
     public UIManager uiManager;
     public TeamManager teamManager;

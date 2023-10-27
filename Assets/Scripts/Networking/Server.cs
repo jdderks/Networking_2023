@@ -77,6 +77,11 @@ public class Server : MonoBehaviour
         }
     }
 
+    private void OnApplicationQuit()
+    {
+        GameManager.Instance.webManager.CloseSession();
+    }
+
     private void OnDestroy()
     {
         Shutdown();
@@ -132,7 +137,7 @@ public class Server : MonoBehaviour
                 if (cmd == NetworkEvent.Type.Data)
                 {
                     NetUtility.OnData(stream, connections[i], this);
-                } 
+                }
                 else if (cmd == NetworkEvent.Type.Disconnect)
                 {
                     Debug.Log("Client disconnected from server");

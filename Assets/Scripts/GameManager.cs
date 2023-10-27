@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
     public UIManager uiManager;
     public TeamManager teamManager;
     public TileGrid grid;
+    public WebManager webManager;
 
     public Server server;
     public Client client;
@@ -33,11 +34,14 @@ public class GameManager : MonoBehaviour
     {
         server.Init(8007);
         client.Init("127.0.0.1", 8007);
+
+        webManager.StartSession();
     }
 
     public void Connect()
     {
         client.Init(uiManager.AdressInput.text, 8007);
+        webManager.ConnectToSession(uiManager.SessionInputField.text);
     }
 
 

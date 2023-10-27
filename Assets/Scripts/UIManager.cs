@@ -9,12 +9,15 @@ public enum UIState
 {
     Main = 0,
     Register = 1,
-    Login = 2
+    Login = 2,
+    HighScores = 3
 }
 
 
 public class UIManager : MonoBehaviour
 {
+
+    #region variables
     [Header("Object references")]
     [SerializeField] private GameObject onlinePanel;
     [SerializeField] private GameObject connectedPanel;
@@ -25,6 +28,8 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI waitingOrConnectedText;
     [SerializeField] private TMP_InputField adressInput;
     [SerializeField] private Image assignedColorImage;
+    [SerializeField] private TextMeshProUGUI sessionNameText;
+    [SerializeField] private TMP_InputField sessionInputField;
 
     [Header("Login related fields")]
     [SerializeField] public TMP_InputField loginUsernameInputField;
@@ -46,7 +51,8 @@ public class UIManager : MonoBehaviour
     //These objects will be swapped between UIstates
     [Space, SerializeField] private GameObject registerObjects;
     [SerializeField] private GameObject loginObjects;
-    [SerializeField] private GameObject otherObjects;
+    [SerializeField] private GameObject mainUIObjects;
+    [SerializeField] private GameObject highscoreObjects;
 
     [SerializeField] private TextMeshProUGUI currentlyLoggedInText;
 
@@ -56,6 +62,15 @@ public class UIManager : MonoBehaviour
     [Header("UI States")]
     [SerializeField] private UIState currentUiState = UIState.Main;
 
+
+    [Space, Header("Leaderboard items"), SerializeField]
+    public GameObject leaderBoardContentObject;
+    public GameObject leaderBoardPrefab;
+    public List<GameObject> instantiatedLeaderBoardGameObjects = new();
+
+    #endregion
+
+    #region properties
     public Image AssignedColorImage { get => assignedColorImage; set => assignedColorImage = value; }
     public GameObject HostPanel { get => hostPanel; set => hostPanel = value; }
     public GameObject ConnectedPanel { get => connectedPanel; set => connectedPanel = value; }
@@ -71,37 +86,55 @@ public class UIManager : MonoBehaviour
     public TextMeshProUGUI CurrentlyLoggedInText { get => currentlyLoggedInText; set => currentlyLoggedInText = value; }
     public Button HostButton { get => hostButton; set => hostButton = value; }
     public Button ConnectButton { get => connectButton; set => connectButton = value; }
+    public TextMeshProUGUI SessionNameText { get => sessionNameText; set => sessionNameText = value; }
+    public TMP_InputField SessionInputField { get => sessionInputField; set => sessionInputField = value; }
 
+    #endregion
+
+    #region UISwitching
     public void SwitchToMainUI()
     {
         currentUiState = UIState.Main;
-        otherObjects.SetActive(true);
+        mainUIObjects.SetActive(true);
         registerObjects.SetActive(false);
         loginObjects.SetActive(false);
+        highscoreObjects.SetActive(false);
     }
 
     public void SwitchToLoginUI()
     {
         currentUiState = UIState.Login;
         loginObjects.SetActive(true);
-        otherObjects.SetActive(false);
+        mainUIObjects.SetActive(false);
         registerObjects.SetActive(false);
+        highscoreObjects.SetActive(false);
     }
 
     public void SwitchToRegisterUI()
     {
         currentUiState = UIState.Register;
-        loginObjects.SetActive(false);
-        otherObjects.SetActive(false);
         registerObjects.SetActive(true);
+        loginObjects.SetActive(false);
+        mainUIObjects.SetActive(false);
+        highscoreObjects.SetActive(false);
     }
 
+    public void SwitchToHighScoresUI()
+    {
+        currentUiState = UIState.HighScores;
+        highscoreObjects.SetActive(true);
+        loginObjects.SetActive(false);
+        mainUIObjects.SetActive(false);
+        registerObjects.SetActive(false);
+    }
     public void DisplayWonPanel(Team team)
     {
         wonPanel.SetActive(true);
         wonPanelText.text = team.ToString() + " has won!";
     }
+    #endregion
 
+    #region datehelper
     internal string GetDateInputs()
     {
         string birthYear = birthYearInputField.text;
@@ -117,7 +150,36 @@ public class UIManager : MonoBehaviour
         string stringDate = birthYear + "-" + birthMonth + "-" + birthDay;
         return stringDate;
     }
+    #endregion
 
+    #region leaderboard
+    public void UpdateLeaderBoard(List<ScoreObject> ScoreObjects)
+    {
+        for (int i = 0; i < instantiatedLeaderBoardGameObjects.Count; i++)
+        {
+            Destroy(instantiatedLeaderBoardGameObjects[i]); //Destroy all objects
+        }
+        instantiatedLeaderBoardGameObjects = new(); //Clear the list
 
+        for (int i = 0; i < ScoreObjects.Count; i++)
+        {
+            GameObject ScoreGameObject = Instantiate(leaderBoardPrefab, leaderBoardContentObject.transform);
+            instantiatedLeaderBoardGameObjects.Add(ScoreGameObject);
 
+            var scoreContent = ScoreGameObject.GetComponent<ScoreContent>();
+
+            scoreContent.NumberText.text = i.ToString(); 
+            scoreContent.PlayerNameText.text = ScoreObjects[i].name; 
+            scoreContent.ScoreText.text = ScoreObjects[i].score.ToString(); 
+        }
+    }
+    #endregion
+
+}
+
+[Serializable]
+public struct ScoreObject
+{
+    public string name;
+    public string score;
 }

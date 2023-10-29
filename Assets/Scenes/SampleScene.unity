@@ -7317,6 +7317,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   teamPlayingAs: 0
   currentTeamTurn: 0
+  amountOfTurns: 0
 --- !u!1 &866829494
 GameObject:
   m_ObjectHideFlags: 0

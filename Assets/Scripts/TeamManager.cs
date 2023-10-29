@@ -22,8 +22,11 @@ public class TeamManager : MonoBehaviour
     [SerializeField] private Team teamPlayingAs = Team.None;
     [SerializeField] private Team currentTeamTurn = Team.None;
 
+    [SerializeField] private int amountOfTurns = 0;
+
     public Team CurrentTeam { get => teamPlayingAs; set => teamPlayingAs = value; }
     public Team CurrentTeamTurn { get => currentTeamTurn; set => currentTeamTurn = value; }
+    public int AmountOfTurns { get => amountOfTurns; set => amountOfTurns = value; }
 
     public static Color GetTeamColor(Team team)
     {

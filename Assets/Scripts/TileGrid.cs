@@ -173,7 +173,7 @@ public class TileGrid : MonoBehaviour
     {
         NetCubeClicked nw = msg as NetCubeClicked;
         Tile tile = GetTileFromCoord(nw.xPosition, nw.zPosition);
-
+        GameManager.Instance.teamManager.AmountOfTurns++;
         if (tile != null)
         {
             // Change the color of the tile

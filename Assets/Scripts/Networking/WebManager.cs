@@ -1,3 +1,4 @@
+using NaughtyAttributes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -286,7 +287,43 @@ public class WebManager : MonoBehaviour
         }
     }
 
+    [Button]
+    public void SendScoreToServer()
+    {
+        StartCoroutine(CreateScoreEntry());
+    }
 
+    private IEnumerator CreateScoreEntry()
+    {
+        WWWForm form = new();
+
+
+
+        form.AddField("player", loggedInUser.username);
+        form.AddField("turns_taken", GameManager.Instance.teamManager.AmountOfTurns.ToString());
+
+        UnityWebRequest webRequest = UnityWebRequest.Post(hostingUrl + "score_insert.php", form);
+
+        yield return webRequest.SendWebRequest();
+
+        if (webRequest.result == UnityWebRequest.Result.ConnectionError)
+        {
+            Debug.Log(webRequest.error);
+        }
+        else
+        {
+            if (webRequest.downloadHandler.text == "1")
+            {
+                //Connected succesfully
+                Debug.Log(webRequest.downloadHandler.text);
+            }
+            else
+            {
+                //Something went wrong
+                Debug.Log(webRequest.downloadHandler.text);
+            }
+        }
+    }
 
     #endregion
 

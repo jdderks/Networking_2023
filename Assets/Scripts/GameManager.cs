@@ -104,6 +104,12 @@ public class GameManager : MonoBehaviour
         NetPlayerWin playerWinNM = msg as NetPlayerWin;
         Team teamThatWon = (Team)playerWinNM.teamWon;
         uiManager.DisplayWonPanel(teamThatWon);
+
+        if (teamThatWon == GameManager.Instance.teamManager.CurrentTeam)
+        {
+            GameManager.Instance.webManager.SendScoreToServer();
+        }
+
         grid.RemoveTileGrid();
         gamePlayable = false;
     }

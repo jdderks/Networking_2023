@@ -107,7 +107,13 @@ public class GameManager : MonoBehaviour
 
         if (teamThatWon == GameManager.Instance.teamManager.CurrentTeam)
         {
+            uiManager.AmountOfTurnsWonText.text = teamManager.AmountOfTurns.ToString();
             GameManager.Instance.webManager.SendScoreToServer();
+        }
+        else
+        {
+
+            uiManager.AmountOfTurnsWonText.text = "Winners score was added to the highscores.";
         }
 
         grid.RemoveTileGrid();

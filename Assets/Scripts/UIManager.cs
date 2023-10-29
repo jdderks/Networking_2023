@@ -24,6 +24,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject hostPanel;
     [SerializeField] private GameObject wonPanel;
     [SerializeField] private TextMeshProUGUI wonPanelText;
+    [SerializeField] private TextMeshProUGUI amountOfTurnsWonText;
     [SerializeField] private TextMeshProUGUI currentTurnText;
     [SerializeField] private TextMeshProUGUI waitingOrConnectedText;
     [SerializeField] private TMP_InputField adressInput;
@@ -88,6 +89,7 @@ public class UIManager : MonoBehaviour
     public Button ConnectButton { get => connectButton; set => connectButton = value; }
     public TextMeshProUGUI SessionNameText { get => sessionNameText; set => sessionNameText = value; }
     public TMP_InputField SessionInputField { get => sessionInputField; set => sessionInputField = value; }
+    public TextMeshProUGUI AmountOfTurnsWonText { get => amountOfTurnsWonText; set => amountOfTurnsWonText = value; }
 
     #endregion
 
